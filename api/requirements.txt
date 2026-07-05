@@ -6,4 +6,16 @@ openai
 serpapi
 python-multipart
 langchain_community
-pinecone-client
+langchain-openai
+sqlalchemy
+psycopg2-binary
+passlib[bcrypt]
+python-jose[cryptography]
+redis
+celery
+chromadb
+faiss-cpu
+python-docx
+python-pptx
+pypdf
+tesseract-ocr

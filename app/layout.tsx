@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
+import QueryProvider from "@/components/query-provider";
 
 export const metadata: Metadata = {
-  title: "ACE AI - AI-Powered Exam Prep",
-  description: "Ace your exam preparation with AI-powered learning assistance",
+  title: "NexusLearn AI | Premium AI Learning Workspace",
+  description: "Next-gen AI assistant to analyze docs, auto-schedule plans, run code labs, and score technical interviews.",
 };
 
 export default function RootLayout({
@@ -15,8 +13,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" className="dark">
+      <body>
+        <QueryProvider>
+          {children}
+        </QueryProvider>
+      </body>
     </html>
   );
 }

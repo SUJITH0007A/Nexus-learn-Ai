@@ -37,8 +37,19 @@ next-env.d.ts
 
 .env
 .venv
+venv/
+api/venv/
 __pycache__
 .vercel
-.gitigonre
+.gitignore
 
-.vercel
+# local database & caches
+*.db
+uploads/
+temp/
+cache/
+api/uploads/
+api/temp/
+api/cache/
+.next/
+node_modules/

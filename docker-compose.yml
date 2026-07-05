@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # Database Service (PostgreSQL)
+  db:
+    image: postgres:15-alpine
+    container_name: nexuslearn_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: nexuslearn
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Cache & Celery Message Broker (Redis)
+  redis:
+    image: redis:7-alpine
+    container_name: nexuslearn_redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  # Backend API service (FastAPI)
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nexuslearn_api
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql://postgres:password123@db:5432/nexuslearn
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_ALWAYS_EAGER=False
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+
+  # Celery Asynchronous background worker
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nexuslearn_worker
+    restart: always
+    command: celery -A api.services.celery_app.celery_app worker --loglevel=info
+    environment:
+      - DATABASE_URL=postgresql://postgres:password123@db:5432/nexuslearn
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_ALWAYS_EAGER=False
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    depends_on:
+      - redis
+      - db
+
+volumes:
+  postgres_data:
