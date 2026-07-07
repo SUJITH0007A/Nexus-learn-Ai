@@ -22,4 +22,6 @@ email-validator
 psutil
 pinecone-client
 boto3
-psycopg2-binary
+psycopg2-binary
+langchain-core
+langchain-text-splitters
