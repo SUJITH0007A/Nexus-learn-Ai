@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 import json
 
-from api.core.database import get_db
+from api.core.database import get_db, SessionLocal
 from api.models.schemas import User, Chat, Message, Folder
 from api.core.auth import get_current_user
 from api.services.ai_service import ai_service

@@ -4,13 +4,20 @@ from langchain_community.embeddings import OpenAIEmbeddings
 from langchain_community.vectorstores import Pinecone as LangchainPinecone
 from core.config import settings
 
-# Initialize Pinecone client
-pc = Pinecone(api_key=settings.PINECONE_API_KEY)
+# Initialize Pinecone client safely
+pc = None
+if settings.PINECONE_API_KEY:
+    try:
+        pc = Pinecone(api_key=settings.PINECONE_API_KEY)
+    except:
+        pass
 
 def get_or_create_index(index_name: str, dimension: int = 1536):
     """
     Get an existing index or create a new one if it doesn't exist.
     """
+    if not pc:
+        raise ValueError("Pinecone API key is not configured.")
     # Get a list of indexes and check if our index exists
     index_list = pc.list_indexes().names()
     

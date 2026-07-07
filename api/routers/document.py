@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 import os
 import shutil
 import uuid
+from typing import List, Optional, Dict
 
 from api.core.database import get_db, SessionLocal
 from api.models.schemas import User, Document, Quiz, Flashcard
@@ -10,6 +11,8 @@ from api.core.auth import get_current_user
 from api.services.rag_service import rag_service
 from api.services.celery_app import process_and_index_doc_task
 from api.services.ai_service import ai_service
+from api.services.storage_service import storage_service
+import tempfile
 
 router = APIRouter()
 
@@ -38,22 +41,35 @@ async def upload_document(
         )
         
     safe_name = f"{unique_id}_{original_filename}"
-    file_path = os.path.join(UPLOAD_DIR, safe_name)
     
-    # Save file
+    # Save file to a temporary location to measure size and upload to storage_service
+    temp_dir = tempfile.gettempdir()
+    temp_file_path = os.path.join(temp_dir, safe_name)
+    
     try:
-        with open(file_path, "wb") as f:
+        with open(temp_file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
+        
+        file_size = os.path.getsize(temp_file_path)
+        
+        # Upload to storage (either S3 or local directory fallback)
+        destination_key = f"user_{current_user.id}/docs/{safe_name}"
+        storage_path = storage_service.upload_file(temp_file_path, destination_key)
+        
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to write file: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to process and store file: {str(e)}")
+    finally:
+        # Clean up temp file
+        if os.path.exists(temp_file_path):
+            os.remove(temp_file_path)
 
     # Add file placeholder into SQL database
     doc = Document(
         user_id=current_user.id,
         filename=original_filename,
-        file_path=file_path,
+        file_path=storage_path,
         file_type=ext.replace(".", "").upper(),
-        size_bytes=os.path.getsize(file_path),
+        size_bytes=file_size,
         is_indexed=False
     )
     db.add(doc)
@@ -66,7 +82,7 @@ async def upload_document(
         db.commit()
 
     # Trigger Celery background task (or run synchronously if celery_app is set to task_always_eager)
-    process_and_index_doc_task.delay(current_user.id, doc.id, file_path)
+    process_and_index_doc_task.delay(current_user.id, doc.id, storage_path)
     
     return {
         "id": doc.id,
@@ -128,14 +144,14 @@ async def delete_document(doc_id: int, current_user: User = Depends(get_current_
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
         
-    # Delete file from disk
-    if os.path.exists(doc.file_path):
-        try:
-            os.remove(doc.file_path)
-        except:
-            pass
+    # Delete file from storage service
+    try:
+        storage_service.delete_file(doc.file_path)
+    except Exception as e:
+        # Log error but don't block DB deletion
+        pass
             
-    # Delete vector store cache folder
+    # Delete vector store cache folder locally and from cloud storage
     index_name = f"user_{current_user.id}_doc_{doc.id}"
     index_path = f"cache/vector_stores/{index_name}"
     if os.path.exists(index_path):
@@ -143,6 +159,11 @@ async def delete_document(doc_id: int, current_user: User = Depends(get_current_
             shutil.rmtree(index_path)
         except:
             pass
+            
+    try:
+        storage_service.delete_file(f"user_{current_user.id}/vector_stores/{index_name}.zip")
+    except Exception as e:
+        pass
             
     db.delete(doc)
     db.commit()

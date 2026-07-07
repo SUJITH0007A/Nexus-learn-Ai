@@ -1,8 +1,9 @@
 import os
 import sys
 
-# Add parent directory of 'api' to python path to resolve absolute 'api.*' imports
+# Add parent directory of 'api' and 'api' directory itself to python path to resolve all import patterns
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware

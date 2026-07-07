@@ -8,7 +8,6 @@ python-multipart
 langchain_community
 langchain-openai
 sqlalchemy
-psycopg2-binary
 passlib[bcrypt]
 python-jose[cryptography]
 redis
@@ -18,4 +17,9 @@ faiss-cpu
 python-docx
 python-pptx
 pypdf
-tesseract-ocr
+pytesseract
+email-validator
+psutil
+pinecone-client
+boto3
+psycopg2-binary

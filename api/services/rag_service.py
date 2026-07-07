@@ -34,57 +34,80 @@ class RAGService:
         """
         Extract all text contents from PDF, DOCX, PPTX, TXT, CSV, or Image files.
         """
-        if not os.path.exists(file_path):
-            raise FileNotFoundError(f"File not found: {file_path}")
+        from api.services.storage_service import storage_service
+        import tempfile
+        
+        temp_local_file = None
+        local_path = file_path
+        
+        if storage_service.is_cloud_enabled() and not os.path.exists(file_path):
+            try:
+                temp_dir = tempfile.gettempdir()
+                filename = os.path.basename(file_path)
+                temp_local_file = os.path.join(temp_dir, filename)
+                storage_service.download_file(file_path, temp_local_file)
+                local_path = temp_local_file
+            except Exception as e:
+                raise FileNotFoundError(f"Cloud storage file download failed for {file_path}: {str(e)}")
 
-        ext = os.path.splitext(file_path)[1].lower()
+        if not os.path.exists(local_path):
+            raise FileNotFoundError(f"File not found: {local_path}")
+
+        ext = os.path.splitext(local_path)[1].lower()
         text = ""
 
-        # 1. Plain Text
-        if ext == ".txt":
-            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-                text = f.read()
+        try:
+            # 1. Plain Text
+            if ext == ".txt":
+                with open(local_path, "r", encoding="utf-8", errors="ignore") as f:
+                    text = f.read()
 
-        # 2. PDF Parsing
-        elif ext == ".pdf":
-            reader = PdfReader(file_path)
-            for page in reader.pages:
-                page_text = page.extract_text()
-                if page_text:
-                    text += page_text + "\n"
+            # 2. PDF Parsing
+            elif ext == ".pdf":
+                reader = PdfReader(local_path)
+                for page in reader.pages:
+                    page_text = page.extract_text()
+                    if page_text:
+                        text += page_text + "\n"
 
-        # 3. Word Document (DOCX)
-        elif ext == ".docx":
-            doc = DocxDocument(file_path)
-            for para in doc.paragraphs:
-                if para.text:
-                    text += para.text + "\n"
+            # 3. Word Document (DOCX)
+            elif ext == ".docx":
+                doc = DocxDocument(local_path)
+                for para in doc.paragraphs:
+                    if para.text:
+                        text += para.text + "\n"
 
-        # 4. PowerPoint Presentation (PPTX)
-        elif ext == ".pptx":
-            prs = Presentation(file_path)
-            for slide in prs.slides:
-                for shape in slide.shapes:
-                    if hasattr(shape, "text") and shape.text:
-                        text += shape.text + "\n"
+            # 4. PowerPoint Presentation (PPTX)
+            elif ext == ".pptx":
+                prs = Presentation(local_path)
+                for slide in prs.slides:
+                    for shape in slide.shapes:
+                        if hasattr(shape, "text") and shape.text:
+                            text += shape.text + "\n"
 
-        # 5. CSV Data
-        elif ext == ".csv":
-            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-                reader = csv.reader(f)
-                for row in reader:
-                    text += ", ".join(row) + "\n"
+            # 5. CSV Data
+            elif ext == ".csv":
+                with open(local_path, "r", encoding="utf-8", errors="ignore") as f:
+                    reader = csv.reader(f)
+                    for row in reader:
+                        text += ", ".join(row) + "\n"
 
-        # 6. OCR Images (PNG, JPG, JPEG)
-        elif ext in [".png", ".jpg", ".jpeg"]:
-            try:
-                img = Image.open(file_path)
-                text = pytesseract.image_to_string(img)
-            except Exception as e:
-                text = f"Image OCR extraction error: {str(e)}"
-                
-        else:
-            raise ValueError(f"Unsupported file format: {ext}")
+            # 6. OCR Images (PNG, JPG, JPEG)
+            elif ext in [".png", ".jpg", ".jpeg"]:
+                try:
+                    img = Image.open(local_path)
+                    text = pytesseract.image_to_string(img)
+                except Exception as e:
+                    text = f"Image OCR extraction error: {str(e)}"
+                    
+            else:
+                raise ValueError(f"Unsupported file format: {ext}")
+        finally:
+            if temp_local_file and os.path.exists(temp_local_file):
+                try:
+                    os.remove(temp_local_file)
+                except:
+                    pass
 
         return text
 
@@ -132,6 +155,16 @@ class RAGService:
         """
         index_name = f"user_{user_id}_doc_{document_id}"
         index_path = os.path.join(CACHE_DIR, index_name)
+        
+        # Check if local FAISS index exists; if not, try downloading it from cloud storage
+        if not os.path.exists(index_path):
+            from api.services.storage_service import storage_service
+            if storage_service.is_cloud_enabled():
+                try:
+                    cloud_zip_key = f"user_{user_id}/vector_stores/{index_name}.zip"
+                    storage_service.download_and_extract_zip(cloud_zip_key, index_path)
+                except Exception as e:
+                    print(f"Could not load index from cloud storage: {str(e)}")
         
         if not os.path.exists(index_path):
             return []
