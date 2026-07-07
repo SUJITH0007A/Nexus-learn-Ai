@@ -29,8 +29,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Root endpoint
-@app.get("/")
+# Root endpoint (handles GET and HEAD for cloud health checks)
+@app.api_route("/", methods=["GET", "HEAD"])
 async def read_root():
     return {"message": "Welcome to the NexusLearn AI Premium SaaS API!"}
 
