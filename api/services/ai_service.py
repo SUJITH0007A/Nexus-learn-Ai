@@ -189,6 +189,24 @@ class AIService:
         # 6. Default: OpenAI Routing (gpt-4o / gpt-4 etc)
         else:
             if not self.openai_key:
+                # If Gemini is configured, use it as a free real-AI fallback instead of simulating!
+                if self.gemini_key:
+                    try:
+                        client = AsyncOpenAI(api_key=self.gemini_key, base_url="https://generativelanguage.googleapis.com/v1beta/openai/")
+                        chat_completion = await client.chat.completions.create(
+                            model="gemini-1.5-flash",
+                            messages=messages,
+                            temperature=temperature,
+                            stream=True
+                        )
+                        async for chunk in chat_completion:
+                            content = chunk.choices[0].delta.content
+                            if content:
+                                yield content
+                        return
+                    except Exception as e:
+                        pass
+                
                 yield "OpenAI API key is not configured. Falling back to simulated response:\n\n"
                 async for chunk in self._mock_streaming_response("GPT-4o", messages[-1]["content"]):
                     yield chunk
