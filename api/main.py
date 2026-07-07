@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.core.database import engine, Base
-from api.routers import auth, chat, document, planner, interview, codelab, gamification, admin, interaction, rag, web_search
+from api.routers import auth, chat, document, planner, interview, codelab, gamification, admin
 
 # Create SQL databases/tables on application start
 Base.metadata.create_all(bind=engine)
@@ -44,8 +44,8 @@ app.include_router(codelab.router, prefix="/api/codelab", tags=["Code Lab"])
 app.include_router(gamification.router, prefix="/api/analytics", tags=["Gamification & Analytics"])
 app.include_router(admin.router, prefix="/api/admin", tags=["Admin Panel"])
 
-# Legacy / simple fallback routers
-app.include_router(interaction.router, prefix="/api/interaction", tags=["Legacy Interaction"])
-app.include_router(rag.router, prefix="/api/rag", tags=["Legacy RAG"])
-app.include_router(web_search.router, prefix="/api/web-search", tags=["Legacy Web Search"])
+# Legacy / simple fallback routers (disabled to prevent legacy package conflicts)
+# app.include_router(interaction.router, prefix="/api/interaction", tags=["Legacy Interaction"])
+# app.include_router(rag.router, prefix="/api/rag", tags=["Legacy RAG"])
+# app.include_router(web_search.router, prefix="/api/web-search", tags=["Legacy Web Search"])
 
