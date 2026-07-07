@@ -6,8 +6,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# PostgreSQL URL or fallback to SQLite locally
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./nexuslearn.db")
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 # If SQLite is used, ensure we allow multithreading access
 if DATABASE_URL.startswith("sqlite"):
@@ -20,7 +21,8 @@ else:
         pool_size=10,
         max_overflow=20,
         pool_recycle=3600,
-        pool_pre_ping=True
+        pool_pre_ping=True,
+        connect_args={"connect_timeout": 10}
     )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
