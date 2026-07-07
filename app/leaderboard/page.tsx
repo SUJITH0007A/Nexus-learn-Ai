@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE_URL } from "@/lib/utils";
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -39,8 +40,8 @@ export default function LeaderboardPage() {
   const fetchData = async () => {
     try {
       const token = localStorage.getItem("token");
-      const lbResp = await fetch("http://localhost:8000/api/analytics/leaderboard");
-      const achResp = await fetch("http://localhost:8000/api/analytics/achievements", {
+      const lbResp = await fetch(`${API_BASE_URL}/api/analytics/leaderboard`);
+      const achResp = await fetch(`${API_BASE_URL}/api/analytics/achievements`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
       if (lbResp.ok) setLeaderboard(await lbResp.json());

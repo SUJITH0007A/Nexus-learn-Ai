@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE_URL } from "@/lib/utils";
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -41,7 +42,7 @@ export default function DocumentsPage() {
 
   const fetchDocuments = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/documents/list", {
+      const response = await fetch(`${API_BASE_URL}/api/documents/list`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
       if (response.ok) {
@@ -70,7 +71,7 @@ export default function DocumentsPage() {
     formData.append("file", file);
 
     try {
-      const response = await fetch("http://localhost:8000/api/documents/upload", {
+      const response = await fetch(`${API_BASE_URL}/api/documents/upload`, {
         method: "POST",
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         body: formData
@@ -112,7 +113,7 @@ export default function DocumentsPage() {
 
   const handleToggleStar = async (doc: DocumentItem) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/documents/${doc.id}/star`, {
+      const response = await fetch(`${API_BASE_URL}/api/documents/${doc.id}/star`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
@@ -129,7 +130,7 @@ export default function DocumentsPage() {
   const handleDeleteDoc = async (doc: DocumentItem) => {
     if (!confirm(`Are you sure you want to delete ${doc.filename}?`)) return;
     try {
-      const response = await fetch(`http://localhost:8000/api/documents/${doc.id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/documents/${doc.id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
@@ -146,7 +147,7 @@ export default function DocumentsPage() {
     if (!selectedDoc) return;
     setGeneratingSummary(true);
     try {
-      const response = await fetch(`http://localhost:8000/api/documents/${selectedDoc.id}/features/summary`, {
+      const response = await fetch(`${API_BASE_URL}/api/documents/${selectedDoc.id}/features/summary`, {
         method: "POST",
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
@@ -166,7 +167,7 @@ export default function DocumentsPage() {
     if (!selectedDoc) return;
     setGeneratingQuiz(true);
     try {
-      const response = await fetch(`http://localhost:8000/api/documents/${selectedDoc.id}/features/quiz`, {
+      const response = await fetch(`${API_BASE_URL}/api/documents/${selectedDoc.id}/features/quiz`, {
         method: "POST",
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
@@ -185,7 +186,7 @@ export default function DocumentsPage() {
     if (!selectedDoc) return;
     setGeneratingCards(true);
     try {
-      const response = await fetch(`http://localhost:8000/api/documents/${selectedDoc.id}/features/flashcards`, {
+      const response = await fetch(`${API_BASE_URL}/api/documents/${selectedDoc.id}/features/flashcards`, {
         method: "POST",
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });

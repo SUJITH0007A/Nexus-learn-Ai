@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE_URL } from "@/lib/utils";
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -61,7 +62,7 @@ export default function InterviewPage() {
 
   const fetchHistory = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/interview/history", {
+      const response = await fetch(`${API_BASE_URL}/api/interview/history`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
       if (response.ok) {
@@ -74,7 +75,7 @@ export default function InterviewPage() {
   const handleStartInterview = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:8000/api/interview/start", {
+      const response = await fetch(`${API_BASE_URL}/api/interview/start`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -116,7 +117,7 @@ export default function InterviewPage() {
     setLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:8000/api/interview/${activeSession.id}/answer`, {
+      const response = await fetch(`${API_BASE_URL}/api/interview/${activeSession.id}/answer`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -151,7 +152,7 @@ export default function InterviewPage() {
   const handleDeleteSession = async (id: number) => {
     if (!confirm("Are you sure you want to delete this session?")) return;
     try {
-      const response = await fetch(`http://localhost:8000/api/interview/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/interview/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });

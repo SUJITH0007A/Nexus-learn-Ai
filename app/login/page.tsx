@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "@/lib/utils";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -17,7 +18,7 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:8000/api/auth/login", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -49,7 +50,7 @@ export default function LoginPage() {
         name: `${provider.charAt(0).toUpperCase() + provider.slice(1)} Candidate`,
         picture: "https://lh3.googleusercontent.com/aida-public/AB6AXuAOIoT4IUbE9ARM7_qJlh0SCfgBQiJh22s6mSuCuWqdwej4BNagojdlqFC7byJp_vXBiVoz-gi03wp5BTbZ1CaUaPm7GO3ERE9Ks-0i9YI8MTCjbx_1fFhU0vKV91dU_ZN14qy3n5dJ90HKk-rNV3ifqccJlGiKRLaA04Tr8LegwOgWGUFLNz9ZMWS24gNFV_5CMCzCmBS9rZWu2aDFPFcBMaDbPn3h1OStezEpEZISl1-Ww9-XQbur"
       };
-      const response = await fetch(`http://localhost:8000/api/auth/oauth/${provider}`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/oauth/${provider}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(mockPayload),

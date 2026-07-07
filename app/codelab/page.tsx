@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE_URL } from "@/lib/utils";
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -40,7 +41,7 @@ export default function CodeLabPage() {
 
   const fetchSnippets = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/codelab/snippets", {
+      const response = await fetch(`${API_BASE_URL}/api/codelab/snippets`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
       if (response.ok) {
@@ -55,7 +56,7 @@ export default function CodeLabPage() {
     setConsoleOutput("");
     setConsoleError("");
     try {
-      const response = await fetch("http://localhost:8000/api/codelab/run", {
+      const response = await fetch(`${API_BASE_URL}/api/codelab/run`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code, language })
@@ -76,7 +77,7 @@ export default function CodeLabPage() {
     setAnalyzing(true);
     setAiOutput("");
     try {
-      const response = await fetch(`http://localhost:8000/api/codelab/${action}`, {
+      const response = await fetch(`${API_BASE_URL}/api/codelab/${action}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code, language })
@@ -96,7 +97,7 @@ export default function CodeLabPage() {
     e.preventDefault();
     if (!snippetTitle.trim()) return;
     try {
-      const response = await fetch("http://localhost:8000/api/codelab/snippets", {
+      const response = await fetch(`${API_BASE_URL}/api/codelab/snippets`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -122,7 +123,7 @@ export default function CodeLabPage() {
 
   const handleDeleteSnippet = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/codelab/snippets/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/codelab/snippets/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });

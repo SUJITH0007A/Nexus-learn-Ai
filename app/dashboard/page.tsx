@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE_URL } from "@/lib/utils";
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -9,7 +10,7 @@ import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip } from "rec
 // Fetch Stats from backend with authorization
 const fetchStats = async () => {
   const token = localStorage.getItem("token");
-  const response = await fetch("http://localhost:8000/api/analytics/dashboard-stats", {
+  const response = await fetch(`${API_BASE_URL}/api/analytics/dashboard-stats`, {
     headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
   if (!response.ok) {

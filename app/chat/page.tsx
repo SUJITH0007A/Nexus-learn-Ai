@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE_URL } from "@/lib/utils";
 
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -61,7 +62,7 @@ export default function ChatPage() {
 
   const fetchFolders = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/chat/folders", {
+      const response = await fetch(`${API_BASE_URL}/api/chat/folders`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
       if (response.ok) {
@@ -73,7 +74,7 @@ export default function ChatPage() {
 
   const fetchSessions = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/chat/sessions", {
+      const response = await fetch(`${API_BASE_URL}/api/chat/sessions`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
       if (response.ok) {
@@ -88,7 +89,7 @@ export default function ChatPage() {
 
   const fetchMessages = async (sessionId: number) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/chat/sessions/${sessionId}/messages`, {
+      const response = await fetch(`${API_BASE_URL}/api/chat/sessions/${sessionId}/messages`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
       if (response.ok) {
@@ -105,7 +106,7 @@ export default function ChatPage() {
 
   const handleCreateSession = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/chat/sessions", {
+      const response = await fetch(`${API_BASE_URL}/api/chat/sessions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -127,7 +128,7 @@ export default function ChatPage() {
 
   const handleTogglePin = async (session: ChatSession) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/chat/sessions/${session.id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/chat/sessions/${session.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -153,7 +154,7 @@ export default function ChatPage() {
       // Create a session first if none is active
       await handleCreateSession();
       // Fetch updated sessions to find the new active one
-      const response = await fetch("http://localhost:8000/api/chat/sessions", {
+      const response = await fetch(`${API_BASE_URL}/api/chat/sessions`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
       if (response.ok) {
@@ -174,7 +175,7 @@ export default function ChatPage() {
     setIsStreaming(true);
 
     try {
-      const response = await fetch(`http://localhost:8000/api/chat/sessions/${currentSession.id}/stream`, {
+      const response = await fetch(`${API_BASE_URL}/api/chat/sessions/${currentSession.id}/stream`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -242,7 +243,7 @@ export default function ChatPage() {
 
   const handleMessageReaction = async (messageId: number, reaction: "like" | "dislike") => {
     try {
-      const response = await fetch(`http://localhost:8000/api/chat/messages/${messageId}/react`, {
+      const response = await fetch(`${API_BASE_URL}/api/chat/messages/${messageId}/react`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -259,7 +260,7 @@ export default function ChatPage() {
   const handleExportChat = async () => {
     if (!activeSession) return;
     try {
-      const response = await fetch(`http://localhost:8000/api/chat/sessions/${activeSession.id}/export`, {
+      const response = await fetch(`${API_BASE_URL}/api/chat/sessions/${activeSession.id}/export`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
       if (response.ok) {

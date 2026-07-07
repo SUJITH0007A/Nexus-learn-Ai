@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE_URL } from "@/lib/utils";
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -48,7 +49,7 @@ export default function PlannerPage() {
 
   const fetchPlans = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/planner/plans", {
+      const response = await fetch(`${API_BASE_URL}/api/planner/plans`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
       if (response.ok) {
@@ -66,7 +67,7 @@ export default function PlannerPage() {
     setLoading(true);
     try {
       const subjectsArray = subjects.split(",").map(s => s.trim());
-      const response = await fetch("http://localhost:8000/api/planner/plans", {
+      const response = await fetch(`${API_BASE_URL}/api/planner/plans`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -100,7 +101,7 @@ export default function PlannerPage() {
   const handleDeletePlan = async (planId: number) => {
     if (!confirm("Are you sure you want to delete this study plan?")) return;
     try {
-      const response = await fetch(`http://localhost:8000/api/planner/plans/${planId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/planner/plans/${planId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
