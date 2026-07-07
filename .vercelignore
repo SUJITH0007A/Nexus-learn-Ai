@@ -1,0 +1,2 @@
+# Ignore the backend directory for Vercel deployments
+api/
