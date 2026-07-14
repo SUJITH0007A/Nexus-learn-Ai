@@ -39,13 +39,8 @@ export default function InterviewPage() {
 
   useEffect(() => {
     setIsMounted(true);
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/login");
-      return;
-    }
     fetchHistory();
-  }, [router]);
+  }, []);
 
   // Countdown timer loop
   useEffect(() => {

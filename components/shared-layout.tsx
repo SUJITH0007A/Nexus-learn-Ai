@@ -49,7 +49,7 @@ export default function SharedLayout({ children }: SharedLayoutProps) {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    router.push("/login");
+    router.push("/");
   };
 
   const markAllRead = () => {

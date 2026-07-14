@@ -1,11 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import SharedLayout from "@/components/shared-layout";
 
 export default function SettingsPage() {
-  const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
   const [openaiKey, setOpenaiKey] = useState("");
   const [claudeKey, setClaudeKey] = useState("");
@@ -16,11 +14,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     setIsMounted(true);
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/login");
-    }
-  }, [router]);
+  }, []);
 
   const handleSaveSettings = (e: React.FormEvent) => {
     e.preventDefault();

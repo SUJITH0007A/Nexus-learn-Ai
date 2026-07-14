@@ -23,14 +23,9 @@ export default function DashboardPage() {
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
 
-  // Authenticate on mount
   useEffect(() => {
     setIsMounted(true);
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/login");
-    }
-  }, [router]);
+  }, []);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["dashboardStats"],

@@ -31,13 +31,8 @@ export default function CodeLabPage() {
 
   useEffect(() => {
     setIsMounted(true);
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/login");
-      return;
-    }
     fetchSnippets();
-  }, [router]);
+  }, []);
 
   const fetchSnippets = async () => {
     try {

@@ -32,13 +32,8 @@ export default function DocumentsPage() {
 
   useEffect(() => {
     setIsMounted(true);
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/login");
-      return;
-    }
     fetchDocuments();
-  }, [router]);
+  }, []);
 
   const fetchDocuments = async () => {
     try {

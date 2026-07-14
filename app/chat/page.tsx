@@ -43,17 +43,12 @@ export default function ChatPage() {
   
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  // Authenticate & Fetch initial data
+  // Fetch initial data
   useEffect(() => {
     setIsMounted(true);
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/login");
-      return;
-    }
     fetchFolders();
     fetchSessions();
-  }, [router]);
+  }, []);
 
   // Scroll to bottom on messages update
   useEffect(() => {

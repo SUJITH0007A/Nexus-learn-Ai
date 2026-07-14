@@ -2,19 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 export default function LandingPage() {
-  const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
-    const token = localStorage.getItem("token");
-    if (token) {
-      router.push("/dashboard");
-    }
-  }, [router]);
+  }, []);
 
   if (!isMounted) return null;
 
@@ -46,11 +40,8 @@ export default function LandingPage() {
           <span className="font-geist font-bold text-lg text-primary">NexusLearn AI</span>
         </div>
         <div className="flex gap-4">
-          <Link href="/login" className="text-xs font-semibold text-outline hover:text-on-surface transition-colors py-2 px-3">
-            Sign In
-          </Link>
-          <Link href="/register" className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:brightness-110 text-white font-geist font-bold text-xs py-2 px-4 rounded-xl shadow-lg transition-all active:scale-95">
-            Get Started
+          <Link href="/dashboard" className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:brightness-110 text-white font-geist font-bold text-xs py-2 px-4 rounded-xl shadow-lg transition-all active:scale-95">
+            Go to Dashboard
           </Link>
         </div>
       </header>
@@ -71,11 +62,8 @@ export default function LandingPage() {
         </p>
 
         <div className="flex justify-center gap-4 pt-4">
-          <Link href="/register" className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:brightness-110 text-white font-geist font-bold text-xs md:text-sm py-3 px-8 rounded-xl shadow-lg transition-all active:scale-95">
-            Start Free Trial
-          </Link>
-          <Link href="/login" className="bg-surface border border-outline-variant hover:bg-surface-container text-on-surface font-geist font-bold text-xs md:text-sm py-3 px-8 rounded-xl transition-all active:scale-95">
-            Log In
+          <Link href="/dashboard" className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:brightness-110 text-white font-geist font-bold text-xs md:text-sm py-3 px-8 rounded-xl shadow-lg transition-all active:scale-95">
+            Get Started
           </Link>
         </div>
 

@@ -39,13 +39,8 @@ export default function PlannerPage() {
 
   useEffect(() => {
     setIsMounted(true);
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/login");
-      return;
-    }
     fetchPlans();
-  }, [router]);
+  }, []);
 
   const fetchPlans = async () => {
     try {
