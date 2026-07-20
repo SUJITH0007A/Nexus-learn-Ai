@@ -263,7 +263,7 @@ export default function PlannerPage() {
                   AI Daily Agenda
                 </h4>
                 <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
-                  {activePlan.schedule.map((day) => (
+                  {activePlan.schedule?.map((day) => (
                     <div key={day.day} className="p-3 bg-surface border border-outline-variant rounded-xl flex items-start gap-4">
                       <div className="w-8 h-8 rounded-lg bg-primary-container/20 flex items-center justify-center font-geist font-bold text-xs text-primary border border-primary/20">
                         D{day.day}
@@ -274,7 +274,7 @@ export default function PlannerPage() {
                           <span className="text-[10px] text-primary">{day.time_allocation}</span>
                         </div>
                         <ul className="list-disc pl-4 text-xs text-on-surface-variant space-y-1">
-                          {day.topics.map((t, idx) => (
+                          {day.topics?.map((t, idx) => (
                             <li key={idx}>{t}</li>
                           ))}
                         </ul>

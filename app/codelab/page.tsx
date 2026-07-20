@@ -3,8 +3,10 @@ import { API_BASE_URL } from "@/lib/utils";
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import SharedLayout from "@/components/shared-layout";
-import Editor from "@monaco-editor/react";
+
+const Editor = dynamic(() => import("@monaco-editor/react"), { ssr: false });
 
 interface Snippet {
   id: number;

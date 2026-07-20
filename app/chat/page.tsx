@@ -443,7 +443,7 @@ export default function ChatPage() {
                       }`}
                     >
                       {/* Simplistic formatting: Render code fences as code elements */}
-                      {m.content.includes("```") ? (
+                      {(m.content && m.content.includes("```")) ? (
                         m.content.split("```").map((block, idx) => {
                           if (idx % 2 === 1) {
                             const lines = block.split("\n");

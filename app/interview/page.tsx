@@ -296,7 +296,7 @@ export default function InterviewPage() {
 
               {/* Chat Transcripts Loop */}
               <div className="glass-panel p-6 rounded-3xl h-[300px] overflow-y-auto space-y-4">
-                {activeSession.transcripts.map((t, idx) => {
+                {activeSession.transcripts?.map((t, idx) => {
                   const isRecruiter = t.role === "interviewer";
                   const isEval = t.role === "system_evaluation";
                   if (isEval) return null; // Render evaluation in separate dashboard block below

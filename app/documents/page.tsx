@@ -358,7 +358,7 @@ export default function DocumentsPage() {
                           </span>
                         )}
                       </div>
-                      <span className="text-[9px] text-outline">{doc.created_at.split("T")[0]}</span>
+                      <span className="text-[9px] text-outline">{doc.created_at?.split("T")[0] || ""}</span>
                     </div>
                   </div>
                 );
@@ -452,7 +452,7 @@ export default function DocumentsPage() {
                 </div>
                 <div>
                   <p className="text-[9px] text-outline uppercase font-semibold">Upload Date</p>
-                  <p className="font-semibold text-on-surface mt-0.5">{selectedDoc.created_at.split("T")[0]}</p>
+                  <p className="font-semibold text-on-surface mt-0.5">{selectedDoc.created_at?.split("T")[0] || ""}</p>
                 </div>
               </div>
             </div>

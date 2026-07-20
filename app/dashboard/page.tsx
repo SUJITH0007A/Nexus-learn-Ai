@@ -62,15 +62,26 @@ export default function DashboardPage() {
     heatmap: [2, 4, 3, 1, 0, 2, 4, 1, 3, 0, 2, 4, 2, 1, 4, 3, 1, 0, 2, 4, 3, 2, 1, 4, 0, 3, 2, 4]
   };
 
-  const activeData = data || mockData;
+  const activeData = {
+    user_info: { ...mockData.user_info, ...(data?.user_info || {}) },
+    metrics: { ...mockData.metrics, ...(data?.metrics || {}) },
+    study_hours_chart: Array.isArray(data?.study_hours_chart) ? data.study_hours_chart : mockData.study_hours_chart,
+    topic_mastery: Array.isArray(data?.topic_mastery) ? data.topic_mastery : mockData.topic_mastery,
+    recent_activity: Array.isArray(data?.recent_activity) ? data.recent_activity : mockData.recent_activity,
+    heatmap: Array.isArray(data?.heatmap) ? data.heatmap : mockData.heatmap
+  };
 
-  // Chart Formatting
-  const chartData = activeData.study_hours_chart?.map
-    ? activeData.study_hours_chart.map((hours: number, idx: number) => {
-        const labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-        return { name: labels[idx] || `Day ${idx}`, hours };
-      })
-    : mockData.study_hours_chart;
+  // Chart Formatting: Ensure hours is always a primitive number
+  const labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const chartData = activeData.study_hours_chart.map((item: any, idx: number) => {
+    if (typeof item === "number") {
+      return { name: labels[idx] || `Day ${idx + 1}`, hours: item };
+    }
+    return {
+      name: item?.name || labels[idx] || `Day ${idx + 1}`,
+      hours: typeof item?.hours === "number" ? item.hours : 0
+    };
+  });
 
   if (!isMounted) return null;
 
